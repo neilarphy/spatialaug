@@ -1,1 +1,6 @@
 research*
+fns_parser*
+scripts/
+
+.venv/
+data/
