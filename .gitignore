@@ -4,3 +4,16 @@ scripts/
 
 .venv/
 data/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+*.egg
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
