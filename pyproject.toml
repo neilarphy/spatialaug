@@ -16,12 +16,10 @@ dependencies = [
     "scipy>=1.13",
     "scikit-learn>=1.4",
     "pyarrow>=15.0",
+    "pykrige>=1.7",
 ]
 
 [project.optional-dependencies]
-kriging = [
-    "pykrige>=1.7",
-]
 ml = [
     "lightgbm>=4.0",
 ]
@@ -31,7 +29,7 @@ dev = [
     "ruff>=0.5",
 ]
 all = [
-    "spatialaug[kriging,ml,dev]",
+    "spatialaug[ml,dev]",
 ]
 
 [tool.setuptools.packages.find]
@@ -51,3 +49,6 @@ select = ["E", "F", "I", "N", "B", "UP", "W"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v"
+markers = [
+    "slow: тесты, требующие фит вариограммы или большие вычисления",
+]

@@ -52,9 +52,7 @@ class MeanImputer(Imputer):
 
         observed = df[df[target].notna()]
         if observed.empty:
-            raise ValueError(
-                f"No observed (non-NaN) rows in target column {target!r}; cannot fit"
-            )
+            raise ValueError(f"No observed (non-NaN) rows in target column {target!r}; cannot fit")
 
         agg = self.strategy
         self.global_value_ = float(getattr(observed[target], agg)())
