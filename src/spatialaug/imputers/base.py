@@ -6,14 +6,15 @@ import pandas as pd
 
 
 class Imputer(ABC):
-    """Базовый класс для методов импутации.
+    """Base class for all imputation methods.
 
-    импутер обучается на наблюдаемых данных и затем восстанавливает пропуски
-    в целевой колонке на основе пространственных координат и опциональной группы.
+    An imputer fits on observed data (rows where the target is not NaN)
+    and then fills missing values in the target column based on spatial
+    coordinates and, optionally, additional features.
 
-    Контракт:
+    Contract:
         - fit(df, lat, lon, target, **kwargs) -> self
-        - transform(df) -> pd.DataFrame (копия с заполненными NaN в target)
+        - transform(df) -> pd.DataFrame (a copy with NaN in target filled)
         - fit_transform(df, ...) -> pd.DataFrame
     """
 
@@ -32,26 +33,28 @@ class Imputer(ABC):
         target: str,
         **kwargs,
     ) -> Imputer:
-        """Обучить импутер на наблюдаемых строках (где target не NaN).
+        """Fit the imputer on observed rows (where target is not NaN).
 
         Parameters
         ----------
         df : pd.DataFrame
-            Входные данные с координатами и целевой колонкой.
+            Input data with coordinates and target column.
         lat, lon : str
-            Имена колонок широты и долготы.
+            Column names for latitude and longitude.
         target : str
-            Имя колонки, которую надо восстановить.
+            Column name to be reconstructed.
 
         Returns
         -------
         self
         """
+
         raise NotImplementedError
 
     @abstractmethod
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Восстановить NaN в target-колонке. Возвращает копию df."""
+        """Fill NaN in the target column. Returns a copy of df."""
+        
         raise NotImplementedError
 
     def fit_transform(

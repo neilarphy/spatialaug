@@ -47,7 +47,6 @@ def test_mean_imputer_median(df_with_missing):
         target="price",
         group="region",
     )
-    # Из 2 точек медиана = mean, поэтому те же 5.5M / 8.5M
     assert result.loc[1, "price"] == pytest.approx(5_500_000)
     assert result.loc[4, "price"] == pytest.approx(8_500_000)
 

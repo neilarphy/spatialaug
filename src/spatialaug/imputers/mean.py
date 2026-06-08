@@ -1,5 +1,3 @@
-"""Group-wise mean / median imputer — простейший baseline."""
-
 from __future__ import annotations
 
 import pandas as pd
@@ -8,16 +6,16 @@ from spatialaug.imputers.base import Imputer
 
 
 class MeanImputer(Imputer):
-    """Восстановление через среднее / медиану по группе (например, по региону).
+    """Fill missing values with a group-wise mean or median (e.g. by region).
 
-    По умолчанию использует mean. Если указана group-колонка — считает агрегат
-    внутри каждой группы. Для групп, не встречавшихся при обучении,
-    подставляется глобальное значение.
+    Uses mean by default. If a group column is provided, computes the
+    aggregate within each group. For groups not seen during fit, falls
+    back to the global aggregate.
 
     Parameters
     ----------
     strategy : {"mean", "median"}, default="mean"
-        Стратегия агрегации.
+        Aggregation function applied to the target.
 
     Examples
     --------
@@ -28,9 +26,12 @@ class MeanImputer(Imputer):
     """
 
     def __init__(self, strategy: str = "mean") -> None:
+
         super().__init__()
+        
         if strategy not in ("mean", "median"):
             raise ValueError(f"strategy must be 'mean' or 'median', got {strategy!r}")
+        
         self.strategy = strategy
         self.group_col: str | None = None
         self.group_values_: dict | None = None
@@ -66,12 +67,15 @@ class MeanImputer(Imputer):
             self.group_values_ = None
 
         self.is_fitted = True
+        
         return self
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+
         self._check_fitted()
         result = df.copy()
         mask = result[self.target_col].isna()
+        
         if not mask.any():
             return result
 

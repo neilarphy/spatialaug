@@ -1,0 +1,114 @@
+name: Release to PyPI
+
+on:
+  push:
+    tags:
+      - 'v*' 
+
+permissions:
+  contents: write  
+  id-token: write 
+
+jobs:
+  build-and-test:
+    name: Build & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Build wheel + sdist
+        run: python -m build --wheel --sdist
+
+      - name: Verify wheel can be imported
+        run: |
+          pip install dist/*.whl
+          python -c "from spatialaug import (
+              Imputer,
+              MeanImputer, IDWImputer, KNNImputer,
+              KrigingImputer, UniversalKrigingImputer,
+              GBMImputer, KrigingPriorRegression, TabPFNImputer,
+              Augmenter,
+              ValueBasedMask,
+              TransferEvaluator, TransferResult,
+              MissingnessSimulator,
+              SpatialBlockCV,
+              compute_error_suite, by_target_quartile,
+              morans_i, morans_preservation_ratio,
+              MethodProfiler, profile_fit_transform,
+          ); print('OK v' + __import__('spatialaug').__version__)"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/spatialaug/
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  github-release:
+    name: Create GitHub Release
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+
+      - name: Extract version from tag
+        id: tag
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: spatialaug v${{ steps.tag.outputs.version }}
+          generate_release_notes: true
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+          body: |
+            # spatialaug v${{ steps.tag.outputs.version }}
+
+            Install:
+            ```bash
+            pip install spatialaug==${{ steps.tag.outputs.version }}
+            ```
+
+            See [CHANGELOG.md](CHANGELOG.md) for the list of changes.
+
+            ## Artifacts
+            - `spatialaug-${{ steps.tag.outputs.version }}-py3-none-any.whl` — wheel for direct install
+            - `spatialaug-${{ steps.tag.outputs.version }}.tar.gz` — source distribution
