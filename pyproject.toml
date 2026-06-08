@@ -4,12 +4,34 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spatialaug"
-version = "0.0.1"
-description = "Robustness benchmark framework for geospatial interpolation and augmentation"
+version = "0.0.4"
+description = "Robustness benchmark framework for geospatial imputation and augmentation: 10 imputers (incl. TabPFN foundation model + KpR hybrid), spatial block CV, transferability evaluator, value-based privacy masking, Moran's I preservation, ΔF1 augmentation metric."
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [{ name = "Anatoliy Bannikov" }]
+authors = [{ name = "Anatoliy Bannikov", email = "anatoliy.bannikov.business@gmail.com" }]
 license = { text = "MIT" }
+keywords = [
+    "geospatial",
+    "imputation",
+    "kriging",
+    "augmentation",
+    "machine-learning",
+    "fintech",
+    "missing-data",
+    "spatial-statistics",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
 dependencies = [
     "numpy>=1.26,<2.2",
     "pandas>=2.2",
@@ -17,23 +39,37 @@ dependencies = [
     "scikit-learn>=1.4",
     "pyarrow>=15.0",
     "pykrige>=1.7",
+    "lightgbm>=4.0",
+    "tqdm>=4.66",
+    "matplotlib>=3.8",
 ]
 
 [project.optional-dependencies]
-ml = [
-    "lightgbm>=4.0",
-]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=5.0",
     "ruff>=0.5",
+    "build>=1.0",
+    "twine>=4.0",
+]
+foundation = [
+    "tabpfn>=2.0",
 ]
 all = [
-    "spatialaug[ml,dev]",
+    "spatialaug[dev,foundation]",
 ]
+
+[project.urls]
+Homepage = "https://github.com/neilarphy/spatialaug"
+Documentation = "https://github.com/neilarphy/spatialaug#readme"
+Issues = "https://github.com/neilarphy/spatialaug/issues"
+Repository = "https://github.com/neilarphy/spatialaug"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+spatialaug = ["py.typed"]
 
 [tool.ruff]
 line-length = 100
@@ -50,5 +86,5 @@ select = ["E", "F", "I", "N", "B", "UP", "W"]
 testpaths = ["tests"]
 addopts = "-v"
 markers = [
-    "slow: тесты, требующие фит вариограммы или большие вычисления",
+    "slow: tests that require variogram fitting or otherwise heavy computation",
 ]
