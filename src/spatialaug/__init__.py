@@ -54,7 +54,7 @@ from spatialaug.benchmark import MissingnessSimulator
 # Profiling
 from spatialaug.utils import MethodProfiler, profile_fit_transform
 
-__version__ = "0.0.4"
+__version__ = "0.1.0"
 __all__ = [
     "Imputer",
     "MeanImputer",

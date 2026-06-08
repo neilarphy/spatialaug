@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spatialaug"
-version = "0.0.4"
+version = "0.1.0"
 description = "Robustness benchmark framework for geospatial imputation and augmentation: 10 imputers (incl. TabPFN foundation model + KpR hybrid), spatial block CV, transferability evaluator, value-based privacy masking, Moran's I preservation, ΔF1 augmentation metric."
 readme = "README.md"
 requires-python = ">=3.11"
